@@ -1,0 +1,7 @@
+E:\OSSDS\Seed_DL\bin\Debug\Seed_DL.dll
+E:\OSSDS\Seed_DL\bin\Debug\Seed_DL.pdb
+E:\OSSDS\Seed_DL\obj\Debug\Seed_DL.dll
+E:\OSSDS\Seed_DL\obj\Debug\Seed_DL.pdb
+E:\OSSDS\Seed_DL\bin\Debug\Seed_BE.dll
+E:\OSSDS\Seed_DL\bin\Debug\Seed_BE.pdb
+E:\OSSDS\Seed_DL\obj\Debug\Seed_DL.csprojResolveAssemblyReference.cache

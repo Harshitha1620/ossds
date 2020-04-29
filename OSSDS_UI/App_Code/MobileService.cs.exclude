@@ -1,0 +1,266 @@
+﻿using System;
+using System.Text;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Services;
+using System.Web.Services.Protocols;
+using System.Configuration;
+using System.Data;
+using Seed_DL;
+using Seed_BE;
+
+
+/// <summary>
+/// Summary description for MobileService
+/// </summary>
+[WebService(Namespace = "http://tempuri.org/")]
+[WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
+// To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
+// [System.Web.Script.Services.ScriptService]
+
+public class MobileService : System.Web.Services.WebService {
+
+
+    HmpgDashBoard rprt = new HmpgDashBoard();
+    report_BE objbe = new report_BE();
+    DataTable dt = new DataTable();
+    CommonFuncs cf = new CommonFuncs();
+    Masters objm = new Masters();
+    string con = ConfigurationManager.ConnectionStrings["seedsubsidyConnectionString"].ToString();
+    
+
+    public MobileService () {
+    }
+
+    //CROPS
+    public struct CropData
+    {
+        public string cropCode;
+        public string Crop;
+    }
+
+    private CropData[] getCropData(DataTable dt)
+    {
+        CropData[] obj = new CropData[dt.Rows.Count];
+        int i = 0;
+        foreach (DataRow dr in dt.Rows)
+        {
+            obj[i].cropCode = dt.Rows[i][0].ToString();
+            obj[i].Crop = dt.Rows[i][1].ToString();
+            i++;
+        }
+        return obj;
+    }
+
+
+    [WebMethod]
+    public CropData[] GetCrops(string user, string pwd)
+    {
+        CropData[] objData = null;
+        if (user == "NIC" && pwd == "Sa@12345")
+        {
+            objbe.Action="C";
+            dt = rprt.MobileService(objbe, con);
+            objData = getCropData(dt);
+            return objData;
+        }
+        else
+        {
+            return objData;
+        }
+    }
+
+
+
+    //PRICES
+    public struct PriceData
+    {
+        public string Year;
+        public string Season;
+        public string CropCode;
+        public string CropName;
+        public string CropVcode;
+        public string CropVName;
+        public string Actual_MRP;
+        public string Subsidy_Amount;
+        public string FarmerShare;
+        public string EffectiveFrom;
+        public string EffectiveTo;
+    }
+
+    private PriceData[] getDataFromPriceTable(DataTable dt)
+    {
+        PriceData[] obj = new PriceData[dt.Rows.Count];
+        int i = 0;
+        foreach (DataRow dr in dt.Rows)
+        {
+            obj[i].Year = dt.Rows[i]["Year"].ToString();
+            obj[i].Season = dt.Rows[i]["Season"].ToString();
+            obj[i].CropCode = dt.Rows[i]["CropCode"].ToString();
+            obj[i].CropName = dt.Rows[i]["CropName"].ToString();
+            obj[i].CropVcode = dt.Rows[i]["CropVcode"].ToString();
+            obj[i].CropVName = dt.Rows[i]["CropVName"].ToString();
+            obj[i].Actual_MRP = dt.Rows[i]["Actual_MRP"].ToString();
+            obj[i].Subsidy_Amount = dt.Rows[i]["Subsidy_Amount"].ToString();
+            obj[i].FarmerShare = dt.Rows[i]["Subsidized_Price"].ToString();
+            obj[i].EffectiveFrom = dt.Rows[i]["EffectiveFrom"].ToString();
+            obj[i].EffectiveTo = dt.Rows[i]["EffectiveTo"].ToString();
+            i++;
+        }
+        return obj;
+    }
+
+
+    [WebMethod]
+    public PriceData[] GetPrices(string user, string pwd,string year,string season, string crop)
+    {
+        PriceData[] objData = null;
+        if (user == "NIC" && pwd == "Sa@12345")
+        {
+            objbe.Action = "Price";
+            objbe.year = year;
+            objbe.season = season;
+            objbe.crop = crop;
+            dt = rprt.MobileService(objbe, con);
+            objData = getDataFromPriceTable(dt);
+            return objData;
+        }
+        else
+        {
+            return objData;
+        }
+    }
+
+
+
+
+    //SALEPOINTS
+    public struct SPData
+    {
+        public string SalePtCode;
+        public string SalePtName;
+    }
+
+    private SPData[] getSalepointData(DataTable dt)
+    {
+        SPData[] obj = new SPData[dt.Rows.Count];
+        int i = 0;
+        foreach (DataRow dr in dt.Rows)
+        {
+            obj[i].SalePtCode = dt.Rows[i]["SalePtCode"].ToString();
+            obj[i].SalePtName = dt.Rows[i]["SalePtName"].ToString();
+            i++;
+        }
+        return obj;
+    }
+
+
+    [WebMethod]
+    public SPData[] getSalepoints(string user, string pwd, string dist, string mand)
+    {
+        SPData[] objData = null;
+        if (user == "NIC" && pwd == "Sa@12345")
+        {
+            objbe.Action = "SP";
+            objbe.dist = dist;
+            objbe.mand = mand;
+            dt = rprt.MobileService(objbe, con);
+            objData = getSalepointData(dt);
+            return objData;
+        }
+        else
+        {
+            return objData;
+        }
+    }
+
+
+
+
+    //STOCK DETAILS
+    public struct StockData
+    {
+        public string Flag;
+        public string FlagMsg;
+        public string salepoint;
+        public string SalePtName;
+        public string crop;
+        public string CropName;
+        public string cv;
+        public string CropVName;
+        public string stockRrcvd;
+        public string StockLeft;
+    }
+
+    private StockData[] getStcokData(DataTable dt)
+    {
+        StockData[] obj = new StockData[dt.Rows.Count];
+        int i = 0;
+        foreach (DataRow dr in dt.Rows)
+        {           
+            obj[i].salepoint = dt.Rows[i]["salepoint"].ToString();
+            obj[i].SalePtName = dt.Rows[i]["SalePtName"].ToString();
+            obj[i].crop = dt.Rows[i]["crop"].ToString();
+            obj[i].CropName = dt.Rows[i]["CropName"].ToString();
+            obj[i].cv = dt.Rows[i]["cv"].ToString();
+            obj[i].CropVName = dt.Rows[i]["CropVName"].ToString();
+            obj[i].stockRrcvd = dt.Rows[i]["stock_rcvd_qtls"].ToString();
+            obj[i].StockLeft = dt.Rows[i]["StockLeft"].ToString();
+            i++;
+        }
+        return obj;
+    }
+
+
+    [WebMethod]
+    public StockData[] getStcokDetails(string user, string pwd, string year, string season, string sp)
+    {
+        StockData[] objData = null;
+        if (user == "NIC" && pwd == "Sa@12345")
+        {
+            objbe.Action = "STK";
+            objbe.year = year;
+            objbe.season = season;
+            objbe.sp = sp;
+            dt = rprt.MobileService(objbe, con);
+            if (dt.Rows.Count > 0)
+            {
+                objData = new StockData[dt.Rows.Count];
+                int i = 0;
+                foreach (DataRow dr in dt.Rows)
+                {
+                    if (i == 0)
+                    {
+                        objData[i].Flag = "1";
+                        objData[i].FlagMsg = "Data Found";
+                    }
+                    objData[i].salepoint = dt.Rows[i]["salepoint"].ToString();
+                    objData[i].SalePtName = dt.Rows[i]["SalePtName"].ToString();
+                    objData[i].crop = dt.Rows[i]["crop"].ToString();
+                    objData[i].CropName = dt.Rows[i]["CropName"].ToString();
+                    objData[i].cv = dt.Rows[i]["cv"].ToString();
+                    objData[i].CropVName = dt.Rows[i]["CropVName"].ToString();
+                    objData[i].stockRrcvd = dt.Rows[i]["stock_rcvd_qtls"].ToString();
+                    objData[i].StockLeft = dt.Rows[i]["StockLeft"].ToString();
+                    i++;
+                }
+            }
+            else
+            {
+                objData = new StockData[1];
+                objData[0].Flag = "0";
+                objData[0].FlagMsg = "No Data Found";
+            }
+            return objData;
+        }
+        else
+        {
+            objData = new StockData[1];
+            objData[0].Flag = "0";
+            objData[0].FlagMsg = "No Data Found";
+            return objData;
+        }
+    }
+
+}

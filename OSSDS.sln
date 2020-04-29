@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "OSSDS_UI", "OSSDS_UI\", "{EF4AA85F-ACCC-4032-9BA3-58D2D1792C2D}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		ProjectReferences = "{2ADE3B0B-ABFE-4D6D-8A8D-C3B824665570}|Seed_BE.dll;{0ED83D47-094D-4FA1-87CA-C8BC7A8FB090}|Seed_DL.dll;"
+		Debug.AspNetCompiler.VirtualPath = "/OSSDS_UI"
+		Debug.AspNetCompiler.PhysicalPath = "OSSDS_UI\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\OSSDS_UI\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/OSSDS_UI"
+		Release.AspNetCompiler.PhysicalPath = "OSSDS_UI\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\OSSDS_UI\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "19386"
+		DefaultWebSiteLanguage = "Visual C#"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Seed_BE", "Seed_BE\Seed_BE.csproj", "{2ADE3B0B-ABFE-4D6D-8A8D-C3B824665570}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Seed_DL", "Seed_DL\Seed_DL.csproj", "{0ED83D47-094D-4FA1-87CA-C8BC7A8FB090}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EF4AA85F-ACCC-4032-9BA3-58D2D1792C2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF4AA85F-ACCC-4032-9BA3-58D2D1792C2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF4AA85F-ACCC-4032-9BA3-58D2D1792C2D}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF4AA85F-ACCC-4032-9BA3-58D2D1792C2D}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{2ADE3B0B-ABFE-4D6D-8A8D-C3B824665570}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2ADE3B0B-ABFE-4D6D-8A8D-C3B824665570}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2ADE3B0B-ABFE-4D6D-8A8D-C3B824665570}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2ADE3B0B-ABFE-4D6D-8A8D-C3B824665570}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0ED83D47-094D-4FA1-87CA-C8BC7A8FB090}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0ED83D47-094D-4FA1-87CA-C8BC7A8FB090}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0ED83D47-094D-4FA1-87CA-C8BC7A8FB090}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0ED83D47-094D-4FA1-87CA-C8BC7A8FB090}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

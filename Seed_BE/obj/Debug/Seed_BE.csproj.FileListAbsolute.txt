@@ -1,0 +1,4 @@
+E:\OSSDS\Seed_BE\bin\Debug\Seed_BE.dll
+E:\OSSDS\Seed_BE\bin\Debug\Seed_BE.pdb
+E:\OSSDS\Seed_BE\obj\Debug\Seed_BE.dll
+E:\OSSDS\Seed_BE\obj\Debug\Seed_BE.pdb

@@ -1,0 +1,18 @@
+
+      <script type="text/javascript">
+
+
+          $(function () {
+              $("#txtVdate").datepicker({
+                  changeMonth: true,
+                  changeYear: true,
+                  minDate: -2,
+                  dateFormat: 'dd-mm-yy',
+                  buttonImageOnly: true,
+                  buttonText: "Select date",
+                  maxDate: new Date(),
+                  yearRange: "-10:+0"
+              });
+          });
+  </script>  
+  
