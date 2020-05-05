@@ -71,6 +71,7 @@ public partial class login : System.Web.UI.Page
                     string mandal = dtLogin.Rows[0]["MandName"].ToString();
                     string roleNm = dtLogin.Rows[0]["role_name"].ToString();
                     string section = dtLogin.Rows[0]["section"].ToString();
+                    string userid = dtLogin.Rows[0]["Sno"].ToString();
 
                     string myval = ShaEncrypt(ViewState["KeyGenerator"].ToString());
                     string value = ShaEncrypt(password.ToLower() + myval.ToLower());
@@ -88,7 +89,8 @@ public partial class login : System.Web.UI.Page
                         objbe.date_time = DateTime.Now;
                         objbe.ipaddress = Request.ServerVariables["REMOTE_ADDR"].ToString();
                         objbe.loginStatus = "Login Successful";
-                        Session["UserID"] = objLogin.UserLoginStatus(objbe, ConnKey);
+                        Session["UserID"] = userid;
+                        //Session["UserID"] = objLogin.UserLoginStatus(objbe, ConnKey);
 
                         //if (password.ToUpper() == "6B4C8CBCB6B66F050C12D6A0203C58A8BC6D36E5A8C28B74111681F7AECE378A")
                         //{
