@@ -45,7 +45,7 @@ namespace Seed_DL
             {
                 SqlCommand cmd = new SqlCommand("Seed_UserLoginStatus_IU", con);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add("@UserId", SqlDbType.NVarChar).Value =objbe.userid;
+                cmd.Parameters.Add("@UserId", SqlDbType.NVarChar).Value =objbe.username;
                 cmd.Parameters.Add("@Login_or_LogoutDateAndTime", SqlDbType.DateTime).Value = objbe.date_time;
                 cmd.Parameters.Add("@IpAddress", SqlDbType.NVarChar).Value = objbe.ipaddress;
                 cmd.Parameters.Add("@Status", SqlDbType.NVarChar).Value = objbe.loginStatus;

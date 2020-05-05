@@ -1,0 +1,248 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="SeedPrice.aspx.cs" Inherits="Admin_SeedPrice" EnableEventValidation="false" %>
+
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajax" %>
+<%@ Register TagPrefix="menu" TagName="menu" Src="~/Admin/Admin.ascx" %>
+<%@ Register TagPrefix="footer" TagName="footer" Src="~/Footer.ascx" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OSSDS-Seed Price</title>
+     <script type="text/javascript" src="../layout/scripts/jquery.min.js"></script>
+    <script src="../layout/datapicker/jquery-ui.js" type="text/javascript"></script>
+
+    <link href="../layout/styles/layout.css" rel="stylesheet" type="text/css" media="all" />
+     <link href="../layout/datapicker/jquery-ui.css" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript">
+        function Confirm(link) {
+            if (confirm("Are you sure to delete the row?")) {
+                return true;
+            }
+            else
+                return false;
+        }
+       
+        history.pushState(null, null, 'SeedPrice.aspx');
+        window.addEventListener('popstate', function (event) {
+            history.pushState(null, null, 'SeedPrice.aspx');
+        });
+
+
+        $(function () {
+            $("#txtefrm").datepicker({
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: 'dd-mm-yy',
+                buttonImageOnly: true,
+                buttonText: "Select date",
+                maxDate: new Date(),
+                yearRange: "-10:+0"
+            });
+        });
+
+
+        $(function () {
+            $("#txteto").datepicker({
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: 'dd-mm-yy',
+                buttonImageOnly: true,
+                buttonText: "Select date",
+                yearRange: "-1:+1"
+            });
+        });
+      
+
+
+
+    </script>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div class="wrapper row1">
+        <header id="header">
+        <asp:Image ID="Image1" runat="server" ImageUrl="~/images/header.png" />
+        </header>
+        <menu:menu ID="menu1" runat="server" />
+    </div>
+    <asp:ScriptManager ID="ScriptManager1" runat="server">
+    </asp:ScriptManager>
+    <div class="wrapper row2">
+          <main class="hoc container clear">
+        <div class="loggedUser">
+            <img src="../images/14.gif" alt="Log" />
+            Logged in As ::&nbsp;
+            <asp:Label ID="lblUsrName" runat="server"></asp:Label>::
+        </div>
+        <div class="rightdate">
+            Date::<asp:Label ID="lblDate" runat="server"></asp:Label></div>
+        <br />
+        <div id="comments">
+            <fieldset>
+                <h2>
+                    Seed Price</h2>
+                <div class=" one_quarter first">
+                    <label for="ddlyear">
+                        Year<span>*</span></label>
+                    <asp:DropDownList ID="ddlyear" CssClass="fields" runat="server" required>
+                    </asp:DropDownList>
+                </div>
+                <div class=" one_quarter">
+                    <label for="ddlSeason">
+                        Season<span>*</span></label>
+                    <asp:DropDownList ID="ddlSeason" CssClass="fields" runat="server" required 
+                        AutoPostBack="True" onselectedindexchanged="ddlSeason_SelectedIndexChanged">
+                        <asp:ListItem Value="0" Selected="True">-Select-</asp:ListItem>
+                        <asp:ListItem Value="Kharif">Kharif</asp:ListItem>
+                        <asp:ListItem Value="Rabi">Rabi</asp:ListItem>
+                    </asp:DropDownList>
+                </div>
+                <div class=" one_quarter">
+                    <label for="ddlScheme">
+                        Scheme</label>
+                    <asp:DropDownList ID="ddlScheme" CssClass="fields" required runat="server" AutoPostBack="true"
+                        onselectedindexchanged="ddlScheme_SelectedIndexChanged" >
+                    </asp:DropDownList>
+                </div>
+                <div class=" one_quarter ">
+                    <label for="ddlcomapny">
+                        Company</label>
+                    <asp:DropDownList ID="ddlcomapny" CssClass="fields" runat="server" AutoPostBack="true" 
+                        OnSelectedIndexChanged="ddlcomapny_SelectedIndexChanged">
+                    </asp:DropDownList>
+                </div>
+                <div class=" one_quarter first">
+                    <label for="ddlcrop">
+                        Crop<span>*</span></label>
+                    <asp:DropDownList ID="ddlcrop" CssClass="fields" runat="server" AutoPostBack="true" required
+                        OnSelectedIndexChanged="ddlcrop_SelectedIndexChanged">
+                    </asp:DropDownList>
+                </div>
+                <div class=" one_quarter ">
+                    <label for="ddlcv">
+                        Crop Vareity<span>*</span></label>
+                    <asp:DropDownList ID="ddlcv" CssClass="fields" runat="server" required AutoPostBack="true"
+                        onselectedindexchanged="ddlcv_SelectedIndexChanged">
+                    </asp:DropDownList>
+                </div>
+                <div class=" one_quarter ">
+                    <label for="txtmrp">
+                        Actual Price<span>*</span></label>
+                    <asp:TextBox ID="txtmrp" placeholder="Actual MRP" runat="server" AutoPostBack="true"
+                        ontextchanged="txtmrp_TextChanged" required></asp:TextBox>(per
+                    qtl) <ajax:FilteredTextBoxExtender ID="FilteredTextBoxExtender2" runat="server" FilterType="Numbers,Custom"
+                        TargetControlID="txtmrp" ValidChars="." />
+                </div>
+                <div class=" one_quarter ">
+                    <label for="txtsubsidy">
+                        Subsidy<span>*</span></label>
+                    <asp:TextBox ID="txtsubsidy" placeholder="Subsidy" runat="server" AutoPostBack="true"
+                        OnTextChanged="txtsubsidy_TextChanged" required></asp:TextBox>(per qtl)
+                        <ajax:FilteredTextBoxExtender ID="FilteredTextBoxExtender1" runat="server" FilterType="Numbers,Custom"
+                        TargetControlID="txtsubsidy" ValidChars="." />
+                </div>
+                <div class=" one_quarter first">
+                    <label for="txtprice">
+                        Non Subsidy(Farmer Share)<span>*</span></label>
+                    <asp:Label ID="txtprice" runat="server" required></asp:Label>
+                </div>
+                <div class=" one_quarter s">
+                    <label for="txtefrm">
+                       Effective From <span>*</span></label>
+                    <asp:TextBox ID="txtefrm" runat="server" required Value="01-05-2019" onblur="if(this.value==''){ this.value='01-05-2019';}"
+                        onfocus="if(this.value=='01-05-2019'){ this.value=''; }" ></asp:TextBox>
+                       
+                </div>
+                <div class=" one_quarter ">
+                    <label for="txteto">
+                        Effective upto <span>*</span></label>
+                    <asp:TextBox ID="txteto" runat="server" Value="31-10-2019" onblur="if(this.value==''){ this.value='31-10-2019';}"
+                        onfocus="if(this.value=='31-10-2019'){ this.value=''; }" required ></asp:TextBox>
+                </div>
+                <div class=" one_quarter ">
+                    <label for="txtlbl">
+                        Price Label</label>
+                    <asp:TextBox ID="txtlbl" runat="server" ></asp:TextBox>
+                        <asp:Label ID="lblid" runat="server" Visible="false"></asp:Label>
+                </div>
+            </fieldset>
+            <fieldset>
+                <div class=" three_quarter center">
+                    <asp:Button ID="btn_Update" runat="server" Height="30px" Text="Update" 
+                        onclick="btn_Update_Click" />
+                    <asp:Button ID="btn_Save" runat="server" Height="35px" Text="Save" OnClick="btnSave_Click" />
+                     <asp:HiddenField runat="server" ID="hf" />
+                </div>
+            </fieldset>
+            <div class="scrollable">
+                <fieldset>
+                    <asp:GridView ID="grdSeedPrice" runat="server" AllowPaging="True" AutoGenerateColumns="False"
+                        CellPadding="3" PageSize="20"  CssClass="grid" 
+                        OnRowCommand="grdSeedPrice_RowCommand" 
+                        onpageindexchanging="grdSeedPrice_PageIndexChanging">
+                        <Columns>
+                            <asp:TemplateField HeaderText="SlNo">
+                                <ItemTemplate>
+                                    <%#Container.DataItemIndex+1 %>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:BoundField DataField="Year" HeaderText="Year" />
+                            <asp:BoundField DataField="season" HeaderText="Season" />
+                            <asp:TemplateField HeaderText="Scheme">
+                                <ItemTemplate>
+                                    <asp:Label ID="lblScheme" runat="server" Text='<%# Eval("Scheme_Name")%>'></asp:Label>
+                                    <asp:Label ID="lblSchemeID" runat="server" Visible="false" Text='<%# Eval("Scheme")%>'></asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Crop">
+                                <ItemTemplate>
+                                    <asp:Label ID="lblcrop" runat="server" Text='<%# Eval("CropName")%>'></asp:Label>
+                                    <asp:Label ID="lblcropcode" runat="server" Visible="false" Text='<%# Eval("CropCode")%>'></asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Crop Vareity">
+                                <ItemTemplate>
+                                    <asp:Label ID="lblcv" runat="server" Text='<%# Eval("CropVName")%>'></asp:Label>
+                                    <asp:Label ID="lblcvcode" runat="server" Visible="false" Text='<%# Eval("CropVcode")%>'></asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                           
+                            <asp:BoundField DataField="Actual_MRP" HeaderText="Actual Price(Per Qtl)" />
+                            <asp:BoundField DataField="Subsidy_Amount" HeaderText="Subsidy Amount (Per Qtl)" />
+                            <asp:BoundField DataField="Subsidized_Price" HeaderText="Farmer Share(Per Qtl)" />
+                            <asp:BoundField DataField="EffectiveFrom" HeaderText="Effective from" />
+                            <asp:BoundField DataField="EffectiveTo" HeaderText="Effctive upto" />
+                            <asp:BoundField DataField="label" HeaderText="Label" />                         
+                            <asp:TemplateField HeaderText="Update/Delete" ShowHeader="False">
+                                <ItemTemplate>
+                                   <div class="one_half first">
+                                        <asp:ImageButton ID="btnEdit" formnovalidate="formnovalidate" runat="server" ImageUrl="~/images/edit.png" Width="30"
+                                            CommandName="Edt"></asp:ImageButton></div>
+                                    <div class="one_half">
+                                        <asp:ImageButton ID="btnDelete" formnovalidate="formnovalidate" runat="server" ImageUrl="~/images/delete1.png" Width="30"
+                                            CommandName="Dlt" OnClientClick="return Confirm(this)"></asp:ImageButton></div>
+                                    <asp:HiddenField ID="hdnid" Value='<%# Eval("id") %>' runat="server" />
+                                    <asp:HiddenField ID="hdncropcode" Value='<%# Eval("CropVCode") %>' runat="server" />
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                        </Columns>
+                    </asp:GridView>
+                     <div class="two_third right">
+                    <asp:Button ID="Button1" runat="server" formnovalidate="formnovalidate" Text="Export to Excel" OnClick="Export_Click">
+                    </asp:Button>
+                </div>
+                </fieldset>
+            </div>
+            
+            </main>
+        </div>
+    <div class="wrapper row4 bgded overlay">
+        <footer:footer ID="footer1" runat="server" />
+    </div>
+    <a id="backtotop" href="#top"><i class="fa fa-chevron-up"></i></a>
+    <script type="text/javascript" src="../layout/scripts/jquery.backtotop.js"></script>
+    <script type="text/javascript" src="../layout/scripts/jquery.mobilemenu.js"></script>
+    </form>
+</body>
+</html>

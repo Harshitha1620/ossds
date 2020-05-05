@@ -1,0 +1,549 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data;
+using Seed_BE;
+using Seed_DL;
+using System.Data.SqlClient;
+using System.Configuration;
+using System.IO;
+
+public partial class Admin_SeedPrice : System.Web.UI.Page
+{
+    Masters objm = new Masters();
+    CommonFuncs cf = new CommonFuncs();
+    SeedPriceBE seedbeobj = new SeedPriceBE();
+    SeedPriceDL price = new SeedPriceDL();
+    DataTable dt;
+    string conkey;
+    SampleSqlInjectionScreeningModule obj = new SampleSqlInjectionScreeningModule();
+
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if ((Request.ServerVariables["HTTP_REFERER"] == null) || (Request.ServerVariables["HTTP_REFERER"] == ""))
+        {
+            Response.Redirect("~/Error.aspx");
+        }
+        else
+        {
+            string http_ref = Request.ServerVariables["HTTP_REFERER"].Trim();
+            string http_hos = Request.ServerVariables["HTTP_HOST"].Trim();
+            int len = http_hos.Length;
+            if (http_ref.IndexOf(http_hos, 0) < 0)
+            {
+                Response.Redirect("~/Error.aspx");
+            }
+        }
+        if (Session["UsrName"] == null || Session["UsrName"].ToString() != "Admin")
+        {
+            Response.Redirect("~/Error.aspx");
+        }
+        else
+        {
+            lblUsrName.Text = Session["Role"].ToString();
+            lblDate.Text = DateTime.Now.Day + "/" + DateTime.Now.Month + "/" + DateTime.Now.Year;
+            conkey = Session["ConnKey"].ToString();
+        }
+        if (!IsPostBack)
+        {
+            random();
+            btn_Update.Visible = false;
+            cf.BindFinancialYears(ddlyear);
+            try
+            {
+                //BindCrops();
+                BindComapnies();
+                BindScheme();
+            }
+            catch (Exception ex)
+            {
+                ExceptionLogging.SendExcepToDB(ex, Session["UsrName"].ToString(), Request.ServerVariables["REMOTE_ADDR"].ToString());
+                Response.Redirect("~/Error.aspx");
+            }
+        }
+    }
+    protected void BindComapnies()
+    {
+        dt = new DataTable();
+        dt = objm.GetCompanies("V", conkey);
+        cf.BindDropDownLists(ddlcomapny, dt, "company_name", "company_code", "Select Company");
+    }
+    protected void BindCrops()
+    {
+        dt = objm.GetCrops(ddlScheme.SelectedValue,conkey);
+        cf.BindDropDownLists(ddlcrop, dt, "CropName", "CropCode", "Select Crop Name");
+    }
+    protected void BindScheme()
+    {
+        dt = objm.GetSchemes(conkey);
+        cf.BindDropDownLists(ddlScheme, dt, "Scheme_Name", "Scheme_Id", "Select Scheme");
+    }
+    public void BindGrid()
+    {
+        try
+        {
+            dt = new DataTable();
+            seedbeobj.Year = ddlyear.SelectedItem.Text;
+            seedbeobj.Season = ddlSeason.SelectedItem.Text;
+            seedbeobj.CropCode = ddlcrop.SelectedValue.ToString();
+            seedbeobj.Scheme = ddlScheme.SelectedValue;
+            seedbeobj.Company = ddlcomapny.SelectedValue;
+            seedbeobj.CropCode = ddlcrop.SelectedValue;
+            seedbeobj.CropVCode = ddlcv.SelectedValue;
+            seedbeobj.Action = "R";
+            dt = price.SeedPrice_IUDRDL(seedbeobj, conkey);
+            if (dt != null)
+            {
+                if (dt.Rows.Count > 0)
+                {
+                    grdSeedPrice.Visible = true;
+                    grdSeedPrice.DataSource = dt;
+                    grdSeedPrice.DataBind();
+                }
+                else
+                {
+                    grdSeedPrice.DataSource = null;
+                    grdSeedPrice.DataBind();
+                    txtmrp.Text = "";
+                    txtprice.Text = "";
+
+                    btn_Save.Visible = true;
+                    btn_Update.Visible = false;
+                    grdSeedPrice.Visible = false;
+                }
+            }
+            else
+            {
+                cf.ShowAlertMessage("Price Not yet Entered for this seed");
+            }
+        }
+        catch (Exception ex)
+        {
+            ExceptionLogging.SendExcepToDB(ex, Session["UsrName"].ToString(), Request.ServerVariables["REMOTE_ADDR"].ToString());
+            Response.Redirect("~/Error.aspx");
+        }
+    }
+    protected void ddlSeason_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        BindGrid();
+    }
+    protected void ddlScheme_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        BindGrid();
+        BindCrops();
+    }
+    protected void ddlcomapny_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        BindGrid();
+    }
+    protected void ddlcrop_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        //BindGrid();
+        Bindddlcv();
+    }
+    protected void Bindddlcv()
+    {
+        try
+        {
+            DataTable dt1 = new DataTable();
+            if (ddlcomapny.SelectedIndex != 0)
+                dt1 = objm.viewCroplistCompanyWise(ddlcrop.SelectedValue, ddlcomapny.SelectedValue, conkey);
+            else
+                dt1 = objm.GetCropVarieties(ddlcrop.SelectedValue, conkey);
+            cf.BindDropDownLists_WithAllOption(ddlcv, dt1, "CropVName", "CropVCode", "Select Crop Variety");
+        }
+        catch (Exception ex)
+        {
+            ExceptionLogging.SendExcepToDB(ex, Session["UsrName"].ToString(), Request.ServerVariables["REMOTE_ADDR"].ToString());
+            Response.Redirect("~/Error.aspx");
+        }
+    }
+
+    protected void ddlcv_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        BindGrid();
+    }
+    protected void txtsubsidy_TextChanged(object sender, EventArgs e)
+    {
+        if (ddlSeason.SelectedIndex == 0)
+        {
+            cf.ShowAlertMessage("Select season");
+            txtmrp.Text = "";
+            txtsubsidy.Text = "";
+        }
+        else if (ddlcrop.SelectedIndex == 0)
+        {
+            cf.ShowAlertMessage("Select Crop");
+            txtmrp.Text = "";
+            txtsubsidy.Text = "";
+        }
+        else if (txtmrp.Text == "")
+            cf.ShowAlertMessage("Enter Actual MRP");
+        else if (txtsubsidy.Text == "")
+            cf.ShowAlertMessage("Enter Subsidy");
+        else if (Convert.ToDecimal(txtmrp.Text) < Convert.ToDecimal(txtsubsidy.Text))
+        {
+            cf.ShowAlertMessage("Subsidy can not be more than MRP");
+            txtsubsidy.Text = "";
+            txtmrp.Text = "";
+            txtprice.Text = "";
+        }
+        else
+        {
+            txtprice.Text = (Convert.ToDouble(txtmrp.Text) - Convert.ToDouble(txtsubsidy.Text)).ToString();
+        }
+    }
+   
+
+    
+    protected void grdSeedPrice_RowCommand(object sender, GridViewCommandEventArgs e)
+    {
+        try
+        {
+            if (e.CommandName == "Edt")
+            {
+                GridViewRow gvrow = (GridViewRow)((Control)e.CommandSource).NamingContainer;
+                DataTable dt1 = new DataTable();
+                ddlScheme.SelectedValue = ((Label)gvrow.FindControl("lblSchemeID")).Text;
+                BindCrops();
+                ddlcrop.SelectedValue = ((Label)gvrow.FindControl("lblcropcode")).Text; 
+                dt1 = objm.GetCropVarieties(ddlcrop.SelectedValue, conkey);
+                cf.BindDropDownLists(ddlcv, dt1, "CropVName", "CropVCode", "Select");
+                ddlcv.SelectedValue = ((Label)gvrow.FindControl("lblcvcode")).Text;
+                ddlScheme.SelectedValue = ((Label)gvrow.FindControl("lblSchemeID")).Text; 
+                ddlyear.Enabled = false;
+                ddlSeason.Enabled = false;
+                ddlcrop.Enabled = false;
+                ddlcv.Enabled = false;
+                ddlScheme.Enabled = false;
+                ddlcomapny.Enabled = false;
+                txtmrp.Text = gvrow.Cells[6].Text;
+                txtsubsidy.Text = gvrow.Cells[7].Text;
+                txtprice.Text = gvrow.Cells[8].Text;
+                txtlbl.Text = gvrow.Cells[11].Text;
+                txtefrm.Text = gvrow.Cells[9].Text;
+                txteto.Text = gvrow.Cells[10].Text;
+
+                HiddenField hdnid = (HiddenField)gvrow.FindControl("hdnid");
+                lblid.Text = hdnid.Value;
+                btn_Save.Visible = false;
+                btn_Update.Visible = true;
+            }
+            if (e.CommandName == "Dlt")
+            {
+                GridViewRow gvrow = (GridViewRow)((Control)e.CommandSource).NamingContainer;
+                HiddenField hdnid = (HiddenField)gvrow.FindControl("hdnid");
+                lblid.Text = hdnid.Value;
+                seedbeobj.Action = "D";
+                seedbeobj.id = lblid.Text;
+                dt = price.SeedPrice_IUDRDL(seedbeobj, conkey);
+                if (dt.Rows.Count > 0)
+                    cf.ShowAlertMessage("Failed to Delete");
+                else
+                {
+                    cf.ShowAlertMessage("Deleted");
+                    txtmrp.Text = "";
+                    txtprice.Text = "";
+                    BindGrid();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            ExceptionLogging.SendExcepToDB(ex, Session["UsrName"].ToString(), Request.ServerVariables["REMOTE_ADDR"].ToString());
+            Response.Redirect("~/Error.aspx");
+        }
+    }
+    protected bool ValidatePage()
+    {
+        if (ddlyear.SelectedIndex == 0)
+        {
+            cf.ShowAlertMessage("Select Year");
+            ddlyear.Focus();
+            return false;
+        }
+        else if (ddlSeason.SelectedIndex == 0)
+        {
+            cf.ShowAlertMessage("Select Season");
+            ddlSeason.Focus();
+            return false;
+        }
+        else if (ddlcrop.SelectedIndex == 0)
+        {
+            cf.ShowAlertMessage("Select Crop");
+            ddlcrop.Focus();
+            return false;
+        }
+        else if (ddlcv.SelectedIndex == 0)
+        {
+            cf.ShowAlertMessage("Select Crop Variety");
+            ddlcv.Focus();
+            return false;
+        }
+        else if (txtmrp.Text=="")
+        {
+            cf.ShowAlertMessage("Enter Actual Price");
+            txtmrp.Focus();
+            return false;
+        }
+        else if (txtmrp.Text != "")
+        {
+            bool val;
+            val = obj.CheckInput_new(txtmrp.Text);
+            if (val == true)
+            {
+                Response.Redirect("~/Error.aspx");
+                return false;
+            }
+            else
+                return true;
+        }
+        else if (txtsubsidy.Text == "")
+        {
+            cf.ShowAlertMessage("Enter Subsidy");
+            txtsubsidy.Focus();
+            return false;
+        }
+        else if (txtsubsidy.Text != "")
+        {
+            bool val;
+            val = obj.CheckInput_new(txtsubsidy.Text);
+            if (val == true)
+            {
+                Response.Redirect("~/Error.aspx");
+                return false;
+            }
+            else
+                return true;
+        }
+        else if (txtefrm.Text == "")
+        {
+            cf.ShowAlertMessage("Select Effective  From Date");
+            txtefrm.Focus();
+            return false;
+        }
+        else if (txtefrm.Text != "")
+        {
+            bool val;
+            val = obj.CheckInput_new(txtefrm.Text);
+            if (val == true)
+            {
+                Response.Redirect("~/Error.aspx");
+                return false;
+            }
+            else
+                return true;
+        }
+        else if (txteto.Text == "")
+        {
+            cf.ShowAlertMessage("Select Effective  From Date");
+            txteto.Focus();
+            return false;
+        }
+        else if (txteto.Text != "")
+        {
+            bool val;
+            val = obj.CheckInput_new(txteto.Text);
+            if (val == true)
+            {
+                Response.Redirect("~/Error.aspx");
+                return false;
+            }
+            else
+                return true;
+        }
+        else
+            return true;
+    }
+    protected void btnSave_Click(object sender, EventArgs e)
+    {
+        check();
+        try
+        {
+            seedbeobj.Year = ddlyear.SelectedItem.Text;
+            seedbeobj.Season = ddlSeason.SelectedItem.Text;
+            seedbeobj.CropCode = ddlcrop.SelectedValue.ToString();
+            seedbeobj.CropVCode = ddlcv.SelectedValue.ToString();
+            seedbeobj.Actual_Price = Convert.ToDouble(txtmrp.Text.Trim());
+            seedbeobj.Subsidized_Price = Convert.ToDouble(txtprice.Text.Trim());
+            seedbeobj.Company = ddlcomapny.SelectedValue;
+            seedbeobj.Scheme = ddlScheme.SelectedValue;
+            seedbeobj.label = txtlbl.Text.Trim();
+            seedbeobj.Effective_from = cf.Texttodateconverter(txtefrm.Text.Trim());
+            seedbeobj.Effective_to = cf.Texttodateconverter(txteto.Text.Trim());
+            seedbeobj.UserName = Session["UsrName"].ToString();
+            if (ddlcv.SelectedValue == "ALL")
+                seedbeobj.Action = "A";
+            else
+                seedbeobj.Action = "I";
+            dt = price.SeedPrice_IUDRDL(seedbeobj, conkey);
+            if (dt.Rows.Count > 0)
+                cf.ShowAlertMessage("Failed to Insert");
+            else
+            {
+                cf.ShowAlertMessage("Data Saved");
+                txtmrp.Text = "";
+                txtprice.Text = "";
+                txtsubsidy.Text = "";
+            } 
+            BindGrid();
+        }
+        catch (Exception ex)
+        {
+            ExceptionLogging.SendExcepToDB(ex, Session["UsrName"].ToString(), Request.ServerVariables["REMOTE_ADDR"].ToString());
+            Response.Redirect("~/Error.aspx");
+        }
+    }
+
+    protected void txtmrp_TextChanged(object sender, EventArgs e)
+    {
+        if (txtmrp.Text == "")
+        {
+        }
+
+        else if (txtsubsidy.Text == "")
+        {
+        }
+        else if (Convert.ToDecimal(txtmrp.Text) < Convert.ToDecimal(txtsubsidy.Text))
+        {
+            cf.ShowAlertMessage("Subsidy can not be more than MRP");
+            txtsubsidy.Text = "";
+            txtmrp.Text = "";
+            txtprice.Text = "";
+        }
+        else
+        {
+            txtprice.Text = (Convert.ToDouble(txtmrp.Text) - Convert.ToDouble(txtsubsidy.Text)).ToString();
+        }
+    }
+    protected void btn_Update_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            dt = new DataTable();
+            seedbeobj.Actual_Price = Convert.ToDouble(txtmrp.Text.Trim());
+            seedbeobj.Subsidized_Price = Convert.ToDouble(txtprice.Text.Trim());
+            seedbeobj.Year = ddlyear.SelectedItem.Text;
+            seedbeobj.Season = ddlSeason.SelectedItem.Text;
+            seedbeobj.CropCode = ddlcrop.SelectedValue.ToString();
+            seedbeobj.CropVCode = ddlcv.SelectedValue.ToString();
+            seedbeobj.id = lblid.Text;
+            seedbeobj.UserName = Session["UsrName"].ToString();
+            seedbeobj.Effective_from = cf.Texttodateconverter(txtefrm.Text.Trim());
+            if (txteto.Text == "Until Any Change")
+                seedbeobj.Effective_to = default(DateTime);
+            else
+                seedbeobj.Effective_to = cf.Texttodateconverter(txteto.Text.Trim());
+            seedbeobj.Action = "U";
+            dt = price.SeedPrice_IUDRDL(seedbeobj, conkey);
+            if (dt.Rows.Count > 0)
+                cf.ShowAlertMessage("Update Failed");
+            else
+            {
+                cf.ShowAlertMessage("Updated");
+                txtmrp.Text = "";
+                txtprice.Text = "";
+                btn_Save.Visible = true;
+                btn_Update.Visible = false;               
+            }
+            BindGrid();
+        }
+        catch (Exception ex)
+        {
+            ExceptionLogging.SendExcepToDB(ex, Session["UsrName"].ToString(), Request.ServerVariables["REMOTE_ADDR"].ToString());
+            Response.Redirect("~/Error.aspx");
+        }
+    }   
+
+    protected void grdSeedPrice_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        grdSeedPrice.PageIndex = e.NewPageIndex;
+        BindGrid();
+    }
+    public override void VerifyRenderingInServerForm(Control control)
+    {
+        /* Verifies that the control is rendered */
+    }
+    protected void Export_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            Response.Clear();
+            Response.Buffer = true;
+            Response.ClearContent();
+            Response.ClearHeaders();
+            Response.Charset = "";
+
+            StringWriter strwritter = new StringWriter();
+            HtmlTextWriter htmltextwrtter = new HtmlTextWriter(strwritter);
+            Response.Cache.SetCacheability(HttpCacheability.NoCache);
+            Response.ContentType = "application/vnd.ms-excel";
+            Response.AddHeader("content-disposition", "attachment;filename=SeedPrice.xls");
+            grdSeedPrice.AllowPaging = false;
+            this.BindGrid();
+            grdSeedPrice.GridLines = GridLines.Both;
+            grdSeedPrice.HeaderStyle.Font.Bold = true;
+            grdSeedPrice.RenderControl(htmltextwrtter);
+            Response.Write(strwritter.ToString());
+            Response.End();
+        }
+        catch (Exception ex)
+        {
+            ExceptionLogging.SendExcepToDB(ex, Session["UsrName"].ToString(), Request.ServerVariables["REMOTE_ADDR"].ToString());
+            Response.Redirect("~/Error.aspx");
+        }
+    }
+    
+
+    public void random()
+    {
+        try
+        {
+            string strString = "abcdefghijklmnpqrstuvwxyzABCDQEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+            string num = "";
+            Random rm = new Random();
+            for (int i = 0; i < 16; i++)
+            {
+                int randomcharindex = rm.Next(0, strString.Length);
+                char randomchar = strString[randomcharindex];
+                num += Convert.ToString(randomchar);
+            }
+
+            Response.Cookies.Add(new HttpCookie("ASPFIXATION2", num));
+            hf.Value = num;
+            Session["ASPFIXATION2"] = num;
+        }
+        catch (Exception ex)
+        {
+            Response.Redirect("~/Error.aspx");
+        }
+    }
+    public void check()
+    {
+        try
+        {
+            string cookie_value = null;
+            string session_value = null;
+            //cookie_value = System.Web.HttpContext.Current.Request.Cookies["ASPFIXATION2"].Value;
+            cookie_value = hf.Value;
+            session_value = System.Web.HttpContext.Current.Session["ASPFIXATION2"].ToString();
+            if (cookie_value != session_value)
+            {
+                System.Web.HttpContext.Current.Session.Abandon();
+                HttpContext.Current.Response.Buffer = false;
+                HttpContext.Current.Response.Redirect("~/Error.aspx");
+            }
+        }
+        catch (Exception ex)
+        {
+            Response.Redirect("~/Error.aspx");
+        }
+    }
+
+
+   
+}

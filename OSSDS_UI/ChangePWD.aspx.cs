@@ -9,12 +9,14 @@ using System.Data.SqlClient;
 using System.Web.Security;
 using System.Configuration;
 using Seed_DL;
+using Seed_BE;
 
 public partial class ChangePWD : System.Web.UI.Page
 {
     DataTable dt;
     CommonFuncs objCommon = new CommonFuncs();
-    LoginDAL objlogin = new LoginDAL();
+    Login_DL objLogin = new Login_DL();
+    Master_BE objbe = new Master_BE();
     Masters objm = new Masters();
     string user;
     string ConnKey = ConfigurationManager.ConnectionStrings["seedsubsidyConnectionString"].ToString();
@@ -54,9 +56,11 @@ public partial class ChangePWD : System.Web.UI.Page
     {
         if (PageValidate())
         {
-
-            LoginDAL objLogin = new LoginDAL();
-            DataTable dtLogin = objLogin.getLoginDetailsDAL("2019-20", objm.GetSeasonByMonth(DateTime.Now.Month.ToString(), ConnKey), user, ConnKey);
+            objbe.year = objCommon.getCurrentFinancialYear();
+            objbe.month = DateTime.Now.Month.ToString();
+            objbe.season = objm.GetSeasonByMonth(objbe, ConnKey);
+            objbe.userid = Session["UserID"].ToString();
+            DataTable dtLogin = objLogin.GetLoginDetails(objbe, ConnKey);
             if (dtLogin.Rows.Count > 0)
             {
                 string password = dtLogin.Rows[0]["Password"].ToString();
@@ -66,7 +70,10 @@ public partial class ChangePWD : System.Web.UI.Page
                 {
                     if (txtOldPwdHash.Value == value.ToLower())
                     {
-                        dt = objLogin.updatePWDDAL(user, txtNewPwdHash.Value, Request.ServerVariables["REMOTE_ADDR"].ToString(), ConnKey);
+                        objbe.userid = user;
+                        objbe.pwd = txtNewPwdHash.Value;
+                        objbe.ipaddress = Request.ServerVariables["REMOTE_ADDR"].ToString();
+                        dt = objLogin.GetLoginDetails(objbe, ConnKey);
                         if (dt.Rows.Count > 0)
                         {
                             objCommon.ShowAlertMessage("Password successfully changed");

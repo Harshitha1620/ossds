@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Data;
 
 namespace Seed_BE
 {
@@ -13,6 +14,8 @@ namespace Seed_BE
         public string pwd { get; set; }
         public string loginStatus { get; set; }
         public DateTime date_time { get; set; }
+        public int loginuserid { get; set; }
+        public string sectionid { get; set; }
 
         //LOCATIONS
         public string statecd { get; set; }
@@ -31,8 +34,23 @@ namespace Seed_BE
         public string season { get; set; }
         public string ipaddress { get; set; }
         public string userid { get; set; }
-        public int active { get; set; }
-        public int Action { get; set; }
+        public string active { get; set; }
+        public string Action { get; set; }
         public DateTime efct_dt { get; set; }
+        public DataTable TVP { get; set; }
+
+        //Crop Master
+        public string CropId { get; set; }
+        public string CropName { get; set; }
+        public string type { get; set; }
+        public string no_of_acres { get; set; }
+        public string qty { get; set; }
+        public string packsize { get; set; }
+        public Int32 slno { get; set; }
+        public string scheme { get; set; }
+
+        //COMPANY
+        public string CompanyID { get; set; }
+        public string CompanyName { get; set; }
     }
 }

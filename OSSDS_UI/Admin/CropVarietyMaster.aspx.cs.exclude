@@ -1,0 +1,375 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using Seed_DL;
+using System.Data;
+using System.Web.Security;
+
+public partial class Admin_CropVarietyMaster : System.Web.UI.Page
+{
+
+    Masters objm = new Masters();
+    DataTable ddt;
+    ListItem li;
+    CommonFuncs objCommon = new CommonFuncs();
+    string conkey; 
+    SampleSqlInjectionScreeningModule obj = new SampleSqlInjectionScreeningModule();
+
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        //Htpp Referer Check
+        if ((Request.ServerVariables["HTTP_REFERER"] == null) || (Request.ServerVariables["HTTP_REFERER"] == ""))
+        {
+            Response.Redirect("~/Error.aspx");
+        }
+        else
+        {
+            string http_ref = Request.ServerVariables["HTTP_REFERER"].Trim();
+            string http_hos = Request.ServerVariables["HTTP_HOST"].Trim();
+            int len = http_hos.Length;
+            if (http_ref.IndexOf(http_hos, 0) < 0)
+            {
+                Response.Redirect("~/Error.aspx");
+            }
+        }
+        if (Session["UsrName"] == null || Session["UsrName"].ToString() != "Admin")
+        {
+            Response.Redirect("~/Error.aspx");
+        }
+        else
+        {
+            lblUsrName.Text = Session["Role"].ToString();
+            lblDate.Text = DateTime.Now.Day + "/" + DateTime.Now.Month + "/" + DateTime.Now.Year;
+            conkey=Session["ConnKey"].ToString();
+        }
+        if (!IsPostBack)
+        {
+          
+            btn_Update.Visible = false;
+            try
+            {  
+                random();
+                BindSchemes();
+                BindComapnies();
+            }
+            catch (Exception ex)
+            {
+                ExceptionLogging.SendExcepToDB(ex, Session["UsrName"].ToString(), Request.ServerVariables["REMOTE_ADDR"].ToString());
+                Response.Redirect("~/Error.aspx");
+            }
+        }
+    }
+    protected void BindSchemes()
+    {
+        ddt = new DataTable();
+        ddt = objm.GetSchemes(conkey);
+        objCommon.BindDropDownLists(ddlScheme, ddt, "Scheme_Name", "Scheme_ID", "Select Scheme");
+    }
+    protected void ddlSchemeSelectedIndexChanged(object sender, EventArgs e)
+    {
+        ddt = new DataTable();
+        ddt = objm.GetCrops(ddlScheme.SelectedValue, conkey);
+        objCommon.BindDropDownLists(ddl_CropNm, ddt, "CropName", "CropCode", "Select Crop Name");
+    }
+    protected void BindComapnies()
+    {
+        try
+        {
+            ddt = new DataTable();
+            ddt = objm.GetCompanies("V",conkey);
+            objCommon.BindDropDownLists(ddlcomapnies, ddt, "company_name", "company_code", "Select Company");
+        }
+        catch (Exception ex)
+        {
+            ExceptionLogging.SendExcepToDB(ex, Session["UsrName"].ToString(), Request.ServerVariables["REMOTE_ADDR"].ToString());
+            Response.Redirect("~/Error.aspx");
+        }
+    }
+    protected bool ValidatePage()
+    {
+        if (ddl_CropNm.SelectedIndex == 0)
+        {
+            objCommon.ShowAlertMessage("Select Crop ");
+            ddl_CropNm.Focus();
+            return false;
+        }
+
+        if (txtCropVName.Text== "")
+        {
+            objCommon.ShowAlertMessage("Enter Crop Vareity ");
+            txtCropVName.Focus();
+            return false;
+        }
+        if (txtCropVName.Text != "")
+        {
+            bool val;
+            val = obj.CheckInput_new(txtCropVName.Text);
+            if (val == true)
+            {
+                Response.Redirect("~/Error.aspx");
+                return false;
+            }
+            else
+                return true;
+        }
+        return true;
+    }
+
+    protected void btn_Save_Click(object sender, EventArgs e)
+    {
+        check();
+        if (ValidatePage())
+        {
+            string UserName = Session["UsrName"].ToString();
+            DataTable dt = new DataTable();
+            try
+            {
+                if (ddlcomapnies.SelectedIndex != 0)
+                    dt = objm.InsertVariety(ddl_CropNm.SelectedValue, txtCropVName.Text.Trim(), Session["UsrName"].ToString(), Convert.ToInt16(ddlcomapnies.SelectedValue), conkey);
+                else
+                    dt = objm.InsertVarietyWithoutCompany(ddl_CropNm.SelectedValue, txtCropVName.Text.Trim(), Session["UsrName"].ToString(), conkey);
+                if (dt.Rows.Count > 0)
+                {
+                    if (dt.Rows[0][0].ToString() == "1")
+                    {
+                        string aa = "Inserted Successfully";
+                        objCommon.ShowAlertMessage(aa);
+                        txtCropVName.Text = "";
+                    }
+                    else
+                    {
+                        string aa = dt.Rows[0][0].ToString();
+                        objCommon.ShowAlertMessage(aa);
+                    }
+                }
+                viewdata();
+            }
+            catch (Exception ex)
+            {
+                ExceptionLogging.SendExcepToDB(ex, Session["UsrName"].ToString(), Request.ServerVariables["REMOTE_ADDR"].ToString());
+                Response.Redirect("~/Error.aspx");
+            }
+        }
+    }
+    private void viewdata()
+    {
+        try
+        {
+            DataTable dt1 = new DataTable();
+            if (ddlcomapnies.SelectedIndex != 0)
+            {
+                dt1 = objm.viewCroplistCompanyWise(ddl_CropNm.SelectedValue, ddlcomapnies.SelectedValue, conkey);
+                if (dt1.Rows.Count > 0)
+                {
+                    GridView1.Visible = true;
+                    GridView1.DataSource = dt1;
+                    GridView1.DataBind();
+                }
+                else
+                {
+                    GridView1.Visible = false;
+                    txtCropVName.Text = "";
+                    btn_Update.Visible = false;
+                    btn_Save.Visible = true;
+                }
+            }
+            else if (ddlcomapnies.SelectedIndex == 0)
+            {
+                dt1 = objm.GetCropVarieties(ddl_CropNm.SelectedValue,"get",ddlScheme.SelectedValue,"", conkey);
+                if (dt1.Rows.Count > 0)
+                {
+                    GridView2.Visible = true;
+                    GridView2.DataSource = dt1;
+                    GridView2.DataBind();
+                }
+                else
+                {
+                    GridView2.Visible = false;
+                    GridView2.DataSource = null;
+                    GridView2.DataBind();
+                }
+            }
+            else
+            {
+                //txtCropVcode.Text = "";
+                txtCropVName.Text = "";
+                btn_Update.Visible = false;
+                btn_Save.Visible = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            ExceptionLogging.SendExcepToDB(ex, Session["UsrName"].ToString(), Request.ServerVariables["REMOTE_ADDR"].ToString());
+            Response.Redirect("~/Error.aspx");
+        }
+    }
+
+
+    protected void GridView1_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        GridView1.PageIndex = e.NewPageIndex;
+        viewdata();
+    }
+
+    protected void GridView1_RowCommand(object sender, GridViewCommandEventArgs e)
+    {
+        try
+        {
+            if (e.CommandName == "Edt")
+            {
+                GridViewRow gvrow = (GridViewRow)((Control)e.CommandSource).NamingContainer;
+                Label lblCpVnmTel = (Label)gvrow.FindControl("lblCpVnmTel");
+                Label lblCpVnm = (Label)gvrow.FindControl("lblCpVnm");
+                Label company = (Label)gvrow.FindControl("lblcompcode");
+
+                txtCropVName.Text = lblCpVnm.Text;
+                if (company != null)
+                    ddlcomapnies.SelectedValue = company.Text;
+                cropVcode.Text = ((Label)gvrow.FindControl("lblCpVcode")).Text;
+                btn_Save.Visible = false;
+                btn_Update.Visible = true;
+            }
+            if (e.CommandName == "Dlt")
+            {
+                GridViewRow gvrow = (GridViewRow)((Control)e.CommandSource).NamingContainer;
+                Label lblCpVcode = (Label)gvrow.FindControl("lblCpVcode");
+                Label lblCpVnm = (Label)gvrow.FindControl("lblCpVnm");
+                ddt = objm.DeleteCropV(lblCpVcode.Text, conkey);
+                if (ddt.Rows.Count > 0)
+                {
+                    if (ddt.Rows[0][0].ToString() == "1")
+                    {
+                        string aa = "Deleted Successfully";
+                        objCommon.ShowAlertMessage(aa);
+                        //txtCropVcode.Text = "";
+                        txtCropVName.Text = "";
+                        viewdata();
+                    }
+                    else
+                    {
+                        string aa = "Deleted Failure";
+                        objCommon.ShowAlertMessage(aa);
+                        //txtCropVcode.Text = "";
+                        txtCropVName.Text = "";
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            ExceptionLogging.SendExcepToDB(ex, Session["UsrName"].ToString(), Request.ServerVariables["REMOTE_ADDR"].ToString());
+            Response.Redirect("~/Error.aspx");
+        }
+    }
+
+
+    protected void btn_Update_Click(object sender, EventArgs e)
+    {
+        check();
+        if (ValidatePage())
+        {
+            string UserName = Session["UsrName"].ToString();
+            DataTable dt = new DataTable();
+            try
+            {
+                if (ddlcomapnies.SelectedIndex == 0)
+                    dt = objm.UpdateCropV(ddl_CropNm.SelectedValue, cropVcode.Text, txtCropVName.Text.Trim(), UserName, conkey);
+                else
+                    dt = objm.UpdateCropV(ddl_CropNm.SelectedValue, cropVcode.Text, txtCropVName.Text.Trim(), UserName, Convert.ToInt16(ddlcomapnies.SelectedValue), conkey);
+                if (dt.Rows.Count > 0)
+                {
+                    if (dt.Rows[0][0].ToString() == "1")
+                    {
+                        string aa = "Updated Successfully";
+                        objCommon.ShowAlertMessage(aa);
+                        btn_Save.Visible = true;
+                        txtCropVName.Text = "";
+                        btn_Update.Visible = false;
+                    }
+                    else
+                    {
+                        string aa = "Updated Failure";
+                        objCommon.ShowAlertMessage(aa);
+                    }
+                }
+                viewdata();
+            }
+            catch (Exception ex)
+            {
+                ExceptionLogging.SendExcepToDB(ex, UserName, Request.ServerVariables["REMOTE_ADDR"].ToString());
+                Response.Redirect("~/Error.aspx");
+            }
+        }
+    }
+    protected void ddl_CropNm_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (ddl_CropNm.SelectedIndex > 0)
+        {
+            viewdata();
+        }
+        else
+        {
+            cropVcode.Text = "";
+            txtCropVName.Text = "";
+            GridView1.Visible = false;
+        }       
+    }
+    protected void ddlcomapnies_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (ddl_CropNm.SelectedIndex > 0)
+            viewdata();
+    }
+
+
+
+    public void random()
+    {
+        try
+        {
+            string strString = "abcdefghijklmnpqrstuvwxyzABCDQEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+            string num = "";
+            Random rm = new Random();
+            for (int i = 0; i < 16; i++)
+            {
+                int randomcharindex = rm.Next(0, strString.Length);
+                char randomchar = strString[randomcharindex];
+                num += Convert.ToString(randomchar);
+            }
+
+            Response.Cookies.Add(new HttpCookie("ASPFIXATION2", num));
+            hf.Value = num;
+            Session["ASPFIXATION2"] = num;
+        }
+        catch (Exception ex)
+        {
+            Response.Redirect("~/Error.aspx");
+        }
+    }
+    public void check()
+    {
+        try
+        {
+            string cookie_value = null;
+            string session_value = null;
+            //cookie_value = System.Web.HttpContext.Current.Request.Cookies["ASPFIXATION2"].Value;
+            cookie_value = hf.Value;
+            session_value = System.Web.HttpContext.Current.Session["ASPFIXATION2"].ToString();
+            if (cookie_value != session_value)
+            {
+                System.Web.HttpContext.Current.Session.Abandon();
+                HttpContext.Current.Response.Buffer = false;
+                HttpContext.Current.Response.Redirect("~/Error.aspx");
+            }
+        }
+        catch (Exception ex)
+        {
+            Response.Redirect("~/Error.aspx");
+        }
+    }
+
+    
+}

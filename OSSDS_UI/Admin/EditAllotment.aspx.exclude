@@ -1,0 +1,211 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="EditAllotment.aspx.cs" Inherits="Admin_EditAllotment" %>
+
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
+<%@ Register TagPrefix="menu" TagName="menu" Src="~/Admin/Admin.ascx" %>
+<%@ Register TagPrefix="footer" TagName="footer" Src="~/Footer.ascx" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>OSSDS-Add Seed Allotment</title>
+    <link href="../layout/styles/layout.css" rel="stylesheet" type="text/css" media="all" />
+    <script src="../layout/scripts/jquery.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        history.pushState(null, null, 'EditAllotment.aspx');
+        window.addEventListener('popstate', function (event) {
+            history.pushState(null, null, 'EditAllotment.aspx');
+        });
+
+        function DisableBackButton() {
+            window.history.forward()
+        }
+        DisableBackButton();
+        window.onload = DisableBackButton;
+        window.onpageshow = function (evt) { if (evt.persisted) DisableBackButton() }
+        window.onunload = function () { void (0) }
+
+        window.history.forward(1);
+        function noBack() {
+            window.history.forward();
+        }
+        function Confirm(link) {
+            if (confirm("Are you sure to delete the record?")) {
+                return true;
+            }
+            else
+                return false;
+        }    
+    </script>
+    <script type="text/javascript" language="javascript">
+        function Hidebutton() {
+            $('#<%=btnUpdate.ClientID %>').hide();
+        }
+    </script>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div class="wrapper row1">
+        <header id="header">
+        <asp:Image ID="Image1" runat="server" ImageUrl="../images/header.png" />
+        </header>
+        <menu:menu ID="menu" runat="server" />
+    </div>
+    <asp:ScriptManager ID="ScriptManager1" runat="server">
+    </asp:ScriptManager>
+    <div class="wrapper row2">
+         <main class="hoc container clear">
+        <div class="loggedUser">
+            <img src="../images/14.gif" alt="Log" />
+            Logged in As ::&nbsp;
+            <asp:Label ID="lblUsrName" runat="server"></asp:Label>
+        </div>
+        <div class="rightdate">
+            <asp:Label ID="lblDate" runat="server"></asp:Label>
+            <br />
+        </div>
+        <div id="comments">
+            <br />
+            <fieldset>
+                <h3>
+                    Edit/Delete Seed Allotment
+                </h3>
+                <div class=" one_quarter first">
+                    <label for="ddlyear">
+                        Year:<span>*</span></label>
+                    <asp:DropDownList ID="ddlyear" CssClass="fields" runat="server" required>
+                    </asp:DropDownList>
+                </div>
+                <div class="one_quarter">
+                    <label for="seasons">
+                        Season:<span>*</span></label>
+                    <asp:DropDownList ID="seasons" runat="server" CssClass="fields" required AutoPostBack="True"
+                        OnSelectedIndexChanged="seasons_SelectedIndexChanged">
+                        <asp:ListItem Text="Select Season" Value="0"></asp:ListItem>
+                        <asp:ListItem Text="Kharif" Value="Kharif"></asp:ListItem>
+                        <asp:ListItem Text="Rabi" Value="Rabi"></asp:ListItem>
+                    </asp:DropDownList>
+                </div>
+                 <div class="one_quarter">
+                    <label for="ddlscheme">
+                        Scheme:<span>*</span></label>
+                    <asp:DropDownList ID="ddlscheme" CssClass="fields" runat="server" required 
+                         AutoPostBack="True" onselectedindexchanged="ddlscheme_SelectedIndexChanged">
+                    </asp:DropDownList>
+                </div>
+                <div class="one_quarter  ">
+                    <label for="ddlcropname ">
+                        Crop Name:<span>*</span></label>
+                    <asp:DropDownList ID="ddlcropname" runat="server" CssClass="fields" required AutoPostBack="True"
+                        OnSelectedIndexChanged="ddlcropname_SelectedIndexChanged">
+                    </asp:DropDownList>
+                </div>
+                <div class="one_quarter first ">
+                    <label for="ddldist">
+                        District:<span>*</span></label>
+                    <asp:DropDownList ID="ddldist" CssClass="fields" runat="server" required AutoPostBack="True"
+                        OnSelectedIndexChanged="ddldist_SelectedIndexChanged">
+                    </asp:DropDownList>
+                </div>
+                <div class="one_quarter  ">
+                    <label for="ddlAgency">
+                        Agency:<span>*</span></label>
+                    <asp:DropDownList ID="ddlAgency" CssClass="fields" runat="server" AutoPostBack="True"
+                        required OnSelectedIndexChanged="ddlAgency_SelectedIndexChanged">
+                    </asp:DropDownList>
+                </div>
+               
+                <div class="one_quarter ">
+                    <label for="txtqty">
+                        Alloted Qty:<span>*</span></label>
+                    <asp:TextBox ID="txtqty" runat="server" required></asp:TextBox>
+                    <ajaxToolkit:FilteredTextBoxExtender ID="txtAlloted_extender" FilterType="Numbers,Custom"
+                                        ValidChars="." runat="server" TargetControlID="txtqty">
+                                    </ajaxToolkit:FilteredTextBoxExtender>
+                </div>
+                <div class=" one_half right">
+                    <asp:Label ID="lblaid" runat="server" Visible="false"></asp:Label><asp:HiddenField
+                        runat="server" ID="hf" />
+                    <asp:Button ID="btnUpdate" Visible="false" runat="server" Text="Update" OnClick="btnUpdate_Click1" OnClientClick="return Hidebutton();" />
+                </div>
+                <div class="scrollable">
+                    <asp:GridView ID="grdSeed" AutoGenerateColumns="false" PageSize="10" CssClass="grid"
+                        runat="server" OnRowCommand="grdSeed_RowCommand">
+                        <Columns>
+                            <asp:TemplateField HeaderText="SlNo">
+                                <ItemTemplate>
+                                    <%#Container.DataItemIndex+1 %>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Year">
+                                <ItemTemplate>
+                                    <asp:Label ID="lblyear" runat="server" Text='<%# Eval("year")%>'></asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Season">
+                                <ItemTemplate>
+                                    <asp:Label ID="lblseason" runat="server" Text='<%# Eval("season")%>'></asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Agency">
+                                <ItemTemplate>
+                                    <asp:Label ID="lblagency" runat="server" Text='<%# Eval("AgencyName")%>'></asp:Label>
+                                    <asp:Label ID="lblagencycode" runat="server" Visible="false" Text='<%# Eval("agency_code")%>'></asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Scheme">
+                                <ItemTemplate>
+                                    <asp:Label ID="lblscheme" runat="server" Text='<%# Eval("Scheme_Name")%>'></asp:Label>
+                                    <asp:Label ID="lblschemeid" runat="server" Visible="false" Text='<%# Eval("scheme")%>'></asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Crop">
+                                <ItemTemplate>
+                                    <asp:Label ID="lblcrop" runat="server" Text='<%# Eval("CropName")%>'></asp:Label>
+                                    <asp:Label ID="lblcropcode" runat="server" Visible="false" Text='<%# Eval("crop")%>'></asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="District">
+                                <ItemTemplate>
+                                    <asp:Label ID="lbldist" runat="server" Text='<%# Eval("DistName")%>'></asp:Label>
+                                    <asp:Label ID="lblallotid" runat="server" Visible="false" Text='<%# Eval("allotment_id")%>'></asp:Label>
+                                    <asp:Label ID="lbldistcode" runat="server" Visible="false" Text='<%# Eval("district")%>'></asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Alloted Quantity(in Qtls)">
+                                <ItemTemplate>
+                                    <asp:Label ID="lblqty" runat="server" Text='<%# Eval("alloted_qty")%>'></asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:BoundField DataField="alloteddt" HeaderText="Alloted On" />
+                            <asp:TemplateField HeaderText="" ShowHeader="False">
+                                <ItemTemplate>
+                                    <div class="one_half first">
+                                        <asp:ImageButton ID="btnEdit" runat="server" formnovalidate="formnovalidate" ImageUrl="~/images/edit.png"
+                                            Width="30" CommandName="Edt"></asp:ImageButton></div>
+                                    <div class="one_half">
+                                        <asp:ImageButton ID="btnDelete" runat="server" ImageUrl="~/images/delete1.png" Width="30"
+                                            CommandName="Dlt" OnClientClick="return Confirm(this)"></asp:ImageButton></div>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                        </Columns>
+                    </asp:GridView>
+                    <div class="two_third right">
+                        <asp:Button ID="Button1" runat="server" Text="Get Total" OnClick="Button1_Click1">
+                        </asp:Button>
+                        Total Qty Allotted:
+                        <asp:Label runat="server" ID="lbltotal"></asp:Label>
+                    </div>
+                </div>
+                
+            </fieldset>
+        </div>
+        </main>
+    </div>
+    <div class="wrapper row4 bgded overlay">
+        <footer:footer ID="footer1" runat="server" />
+    </div>
+    <script type="text/javascript" src="../layout/scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="../layout/scripts/jquery.backtotop.js"></script>
+    <script type="text/javascript" src="../layout/scripts/jquery.mobilemenu.js"></script>
+    </form>
+</body>
+</html>

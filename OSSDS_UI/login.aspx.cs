@@ -58,6 +58,7 @@ public partial class login : System.Web.UI.Page
                 objbe.season = objm.GetSeasonByMonth(objbe, ConnKey);
                 objbe.year = objCommon.getCurrentFinancialYear();
                 objbe.username = txtUname.Text.Trim();
+                objbe.Action = "R";
                 DataTable dtLogin = objLogin.GetLoginDetails(objbe, ConnKey);
                 if (dtLogin.Rows.Count > 0)
                 {
@@ -69,6 +70,7 @@ public partial class login : System.Web.UI.Page
                     string district = dtLogin.Rows[0]["DistName"].ToString();
                     string mandal = dtLogin.Rows[0]["MandName"].ToString();
                     string roleNm = dtLogin.Rows[0]["role_name"].ToString();
+                    string section = dtLogin.Rows[0]["section"].ToString();
 
                     string myval = ShaEncrypt(ViewState["KeyGenerator"].ToString());
                     string value = ShaEncrypt(password.ToLower() + myval.ToLower());
@@ -119,6 +121,7 @@ public partial class login : System.Web.UI.Page
                             Session["Role"] = roleNm;
                             Session["UsrName"] = txtUname.Text;
                             Session["StateCode"] = StateCode;
+                            Session["Section"] = section;
                             Response.Redirect("~/Admin/DashBoard.aspx",false);
                         }
                         else if (dtLogin.Rows[0]["Role"].ToString() == "0")
@@ -184,6 +187,7 @@ public partial class login : System.Web.UI.Page
                             Session["Role"] = roleNm;
                             Session["UsrName"] = txtUname.Text;
                             Session["StateCode"] = StateCode;
+                            Session["Section"] = section;
                             Response.Redirect("~/NFSM/DashBoard.aspx", false);
                         }
                     }
@@ -216,7 +220,7 @@ public partial class login : System.Web.UI.Page
         catch (Exception ex)
         {
             ExceptionLogging.SendExcepToDB(ex, Session["UsrName"].ToString(), Request.ServerVariables["REMOTE_ADDR"].ToString());
-            Response.Redirect("~/Error.aspx");
+            //Response.Redirect("~/Error.aspx");
         }
     }
 

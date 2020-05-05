@@ -9,10 +9,12 @@ using System.Web.Security;
 using System.Configuration;
 using System.Text;
 using Seed_DL;
+using Seed_BE;
 
 public partial class Logout : System.Web.UI.Page
 {
     string ConnKey;
+    Master_BE objbe = new Master_BE();
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -34,13 +36,15 @@ public partial class Logout : System.Web.UI.Page
         try
         {
             ConnKey = Session["ConnKey"].ToString();
-            LoginDAL objLogin = new LoginDAL();
+            Login_DL objLogin = new Login_DL();
             if (Session["UsrName"] != null)
             {
                 try
                 {
-                    objLogin.updateUserLoginStatusDAL(Convert.ToInt32(Session["LoginSno"].ToString()), "Logout Success", DateTime.Now, ConnKey);
-
+                    objbe.loginuserid = Convert.ToInt32(Session["LoginSno"].ToString());
+                    objbe.loginStatus = "Logout Success";
+                    objbe.date_time = DateTime.Now;
+                    objLogin.UpdateUserLoginStatus(objbe, ConnKey);
                     try
                     {
                         HttpCookie aCookie;
