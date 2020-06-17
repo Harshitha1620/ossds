@@ -41,7 +41,7 @@ namespace Seed_DL
                 {
                     da.SelectCommand.CommandType = CommandType.StoredProcedure;
                     da.SelectCommand.Parameters.Add("@month", SqlDbType.VarChar).Value = objbe.month;
-                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = objbe.Action;
+                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value  = "Season";
                     DataTable dt = new DataTable();
                     da.Fill(dt);
                     return dt.Rows[0][0].ToString();
