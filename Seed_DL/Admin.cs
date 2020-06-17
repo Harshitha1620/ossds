@@ -1,4 +1,4 @@
-﻿//By Harshitha on 17/06/2020 
+//By Harshitha on 17/06/2020 
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +26,7 @@ namespace Seed_DL
                     da.SelectCommand.Parameters.Add("@cropV", SqlDbType.VarChar).Value = objbe.cropVariety;
                     da.SelectCommand.Parameters.Add("@agency", SqlDbType.VarChar).Value = objbe.agency;
                     da.SelectCommand.Parameters.Add("@scheme", SqlDbType.VarChar).Value = objbe.scheme;
-                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = objbe.Action;
+                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = "I";
                     DataTable dt = new DataTable();
                     da.Fill(dt);
                     return dt;
@@ -83,7 +83,7 @@ namespace Seed_DL
                 using (SqlDataAdapter da = new SqlDataAdapter("Seed_AllotDistricts_UDR", con))
                 {
                     da.SelectCommand.CommandType = CommandType.StoredProcedure;
-                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = objbe.Action;
+                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = "R";
                     da.SelectCommand.Parameters.Add("@Year", SqlDbType.VarChar).Value = objbe.year;
                     da.SelectCommand.Parameters.Add("@season", SqlDbType.VarChar).Value = objbe.season;
                     DataTable dt = new DataTable();
@@ -100,7 +100,7 @@ namespace Seed_DL
                 using (SqlDataAdapter da = new SqlDataAdapter("Seed_AllotDistricts_UDR", con))
                 {
                     da.SelectCommand.CommandType = CommandType.StoredProcedure;
-                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = objbe.Action;
+                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = "R";
                     da.SelectCommand.Parameters.Add("@Year", SqlDbType.VarChar).Value = objbe.year;
                     da.SelectCommand.Parameters.Add("@season", SqlDbType.VarChar).Value = objbe.season;
                     da.SelectCommand.Parameters.Add("@CropCode", SqlDbType.VarChar).Value = objbe.CropId;
@@ -118,7 +118,7 @@ namespace Seed_DL
                 using (SqlDataAdapter da = new SqlDataAdapter("Seed_AllotDistricts_UDR", con))
                 {
                     da.SelectCommand.CommandType = CommandType.StoredProcedure;
-                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = objbe.Action;
+                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = "R3";
                     da.SelectCommand.Parameters.Add("@Year", SqlDbType.VarChar).Value = objbe.year;
                     da.SelectCommand.Parameters.Add("@season", SqlDbType.VarChar).Value = objbe.season;
                     da.SelectCommand.Parameters.Add("@CropCode", SqlDbType.VarChar).Value = objbe.CropId;
@@ -137,7 +137,7 @@ namespace Seed_DL
                 using (SqlDataAdapter da = new SqlDataAdapter("Seed_AllotDistricts_UDR", con))
                 {
                     da.SelectCommand.CommandType = CommandType.StoredProcedure;
-                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = objbe.Action;
+                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = "R4";
                     da.SelectCommand.Parameters.Add("@Year", SqlDbType.VarChar).Value = objbe.year;
                     da.SelectCommand.Parameters.Add("@season", SqlDbType.VarChar).Value = objbe.season;
                     da.SelectCommand.Parameters.Add("@CropCode", SqlDbType.VarChar).Value = objbe.CropId;
@@ -157,7 +157,7 @@ namespace Seed_DL
                 using (SqlDataAdapter da = new SqlDataAdapter("Seed_AllotDistricts_UDR", con))
                 {
                     da.SelectCommand.CommandType = CommandType.StoredProcedure;
-                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = objbe.Action;
+                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = "R5";
                     da.SelectCommand.Parameters.Add("@Year", SqlDbType.VarChar).Value = objbe.year;
                     da.SelectCommand.Parameters.Add("@season", SqlDbType.VarChar).Value = objbe.season;
                     da.SelectCommand.Parameters.Add("@dist", SqlDbType.VarChar).Value = objbe.distcd;
@@ -175,7 +175,7 @@ namespace Seed_DL
                 using (SqlDataAdapter da = new SqlDataAdapter("Seed_AllotDistricts_UDR", con))
                 {
                     da.SelectCommand.CommandType = CommandType.StoredProcedure;
-                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = objbe.Action;
+                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = "R6";
                     da.SelectCommand.Parameters.Add("@Year", SqlDbType.VarChar).Value = objbe.year;
                     da.SelectCommand.Parameters.Add("@season", SqlDbType.VarChar).Value = objbe.season;
                     da.SelectCommand.Parameters.Add("@CropCode", SqlDbType.VarChar).Value = objbe.CropId;
@@ -196,7 +196,7 @@ namespace Seed_DL
                 using (SqlDataAdapter da = new SqlDataAdapter("Seed_AllotDistricts_UDR", con))
                 {
                     da.SelectCommand.CommandType = CommandType.StoredProcedure;
-                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = objbe.Action;
+                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = "D";
                     da.SelectCommand.Parameters.Add("@allotid", SqlDbType.VarChar).Value = objbe.allotid;
                     DataTable dt = new DataTable();
                     da.Fill(dt);
@@ -212,7 +212,7 @@ namespace Seed_DL
                 using (SqlDataAdapter da = new SqlDataAdapter("Seed_AllotDistricts_UDR", con))
                 {
                     da.SelectCommand.CommandType = CommandType.StoredProcedure;
-                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = objbe.Action;
+                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = "U";
                     da.SelectCommand.Parameters.Add("@Year", SqlDbType.VarChar).Value = objbe.year;
                     da.SelectCommand.Parameters.Add("@season", SqlDbType.VarChar).Value = objbe.season;
                     da.SelectCommand.Parameters.Add("@agency", SqlDbType.VarChar).Value = objbe.agency;
@@ -236,7 +236,7 @@ namespace Seed_DL
                 using (SqlDataAdapter da = new SqlDataAdapter("Seed_AllotDistricts_UDR", con))
                 {
                     da.SelectCommand.CommandType = CommandType.StoredProcedure;
-                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = objbe.Action;
+                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = "NU";
                     da.SelectCommand.Parameters.Add("@Year", SqlDbType.VarChar).Value = objbe.year;
                     da.SelectCommand.Parameters.Add("@season", SqlDbType.VarChar).Value = objbe.season;
                     da.SelectCommand.Parameters.Add("@agency", SqlDbType.VarChar).Value = objbe.agency;
@@ -280,7 +280,7 @@ namespace Seed_DL
                     da.SelectCommand.Parameters.Add("@Year", SqlDbType.VarChar).Value = objbe.year;
                     da.SelectCommand.Parameters.Add("@season", SqlDbType.VarChar).Value = objbe.season;
                     da.SelectCommand.Parameters.Add("@tvp1", SqlDbType.Structured).Value = objbe.dtfreeze;
-                    da.SelectCommand.Parameters.Add("@Action", SqlDbType.VarChar).Value = objbe.Action;
+                    da.SelectCommand.Parameters.Add("@Action", SqlDbType.VarChar).Value = "NFSM";
                     DataTable dt = new DataTable();
                     da.Fill(dt);
                     return dt;
@@ -295,7 +295,7 @@ namespace Seed_DL
                 using (SqlDataAdapter da = new SqlDataAdapter("Seed_AllotDistricts_UDR", con))
                 {
                     da.SelectCommand.CommandType = CommandType.StoredProcedure;
-                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = objbe.Action;
+                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = "FNFSM";
                     da.SelectCommand.Parameters.Add("@Year", SqlDbType.VarChar).Value = objbe.year;
                     da.SelectCommand.Parameters.Add("@season", SqlDbType.VarChar).Value = objbe.season;
                     da.SelectCommand.Parameters.Add("@CropCode", SqlDbType.VarChar).Value = objbe.CropId;
@@ -316,7 +316,7 @@ namespace Seed_DL
                 using (SqlDataAdapter da = new SqlDataAdapter("Seed_AllotDistricts_UDR", con))
                 {
                     da.SelectCommand.CommandType = CommandType.StoredProcedure;
-                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = objbe.Action;
+                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = "F1";
                     da.SelectCommand.Parameters.Add("@Year", SqlDbType.VarChar).Value = objbe.year;
                     da.SelectCommand.Parameters.Add("@season", SqlDbType.VarChar).Value = objbe.season;
                     DataTable dt = new DataTable();
@@ -333,7 +333,7 @@ namespace Seed_DL
                 using (SqlDataAdapter da = new SqlDataAdapter("Seed_AllotDistricts_UDR", con))
                 {
                     da.SelectCommand.CommandType = CommandType.StoredProcedure;
-                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = objbe.Action;
+                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = "F2";
                     da.SelectCommand.Parameters.Add("@Year", SqlDbType.VarChar).Value = objbe.year;
                     da.SelectCommand.Parameters.Add("@season", SqlDbType.VarChar).Value = objbe.season;
                     da.SelectCommand.Parameters.Add("@CropCode", SqlDbType.VarChar).Value = objbe.CropId;
@@ -351,7 +351,7 @@ namespace Seed_DL
                 using (SqlDataAdapter da = new SqlDataAdapter("Seed_AllotDistricts_UDR", con))
                 {
                     da.SelectCommand.CommandType = CommandType.StoredProcedure;
-                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = objbe.Action;
+                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = "F3";
                     da.SelectCommand.Parameters.Add("@Year", SqlDbType.VarChar).Value = objbe.year;
                     da.SelectCommand.Parameters.Add("@season", SqlDbType.VarChar).Value = objbe.season;
                     da.SelectCommand.Parameters.Add("@CropCode", SqlDbType.VarChar).Value = objbe.CropId;
@@ -370,7 +370,7 @@ namespace Seed_DL
                 using (SqlDataAdapter da = new SqlDataAdapter("Seed_AllotDistricts_UDR", con))
                 {
                     da.SelectCommand.CommandType = CommandType.StoredProcedure;
-                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = objbe.Action;
+                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = "F4";
                     da.SelectCommand.Parameters.Add("@Year", SqlDbType.VarChar).Value = objbe.year;
                     da.SelectCommand.Parameters.Add("@season", SqlDbType.VarChar).Value = objbe.season;
                     da.SelectCommand.Parameters.Add("@CropCode", SqlDbType.VarChar).Value = objbe.CropId;
@@ -390,7 +390,7 @@ namespace Seed_DL
                 using (SqlDataAdapter da = new SqlDataAdapter("Seed_AllotDistricts_UDR", con))
                 {
                     da.SelectCommand.CommandType = CommandType.StoredProcedure;
-                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = objbe.Action;
+                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = "F5";
                     da.SelectCommand.Parameters.Add("@Year", SqlDbType.VarChar).Value = objbe.year;
                     da.SelectCommand.Parameters.Add("@season", SqlDbType.VarChar).Value = objbe.season;
                     da.SelectCommand.Parameters.Add("@CropCode", SqlDbType.VarChar).Value = objbe.CropId;
@@ -411,7 +411,7 @@ namespace Seed_DL
                 using (SqlDataAdapter da = new SqlDataAdapter("Seed_AllotDistricts_UDR", con))
                 {
                     da.SelectCommand.CommandType = CommandType.StoredProcedure;
-                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = objbe.Action;
+                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = "distWs";
                     da.SelectCommand.Parameters.Add("@Year", SqlDbType.VarChar).Value = objbe.year;
                     da.SelectCommand.Parameters.Add("@season", SqlDbType.VarChar).Value = objbe.season;
                     da.SelectCommand.Parameters.Add("@dist", SqlDbType.VarChar).Value = objbe.distcd;
