@@ -33,8 +33,6 @@ namespace Seed_DL
             }
         }
 
-
-
         public string GetSeasonByMonth(Master_BE objbe, string ConnKey)
         {
             using (SqlConnection con = new SqlConnection(ConnKey))
@@ -43,15 +41,13 @@ namespace Seed_DL
                 {
                     da.SelectCommand.CommandType = CommandType.StoredProcedure;
                     da.SelectCommand.Parameters.Add("@month", SqlDbType.VarChar).Value = objbe.month;
-                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = "Season";
+                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = objbe.Action;
                     DataTable dt = new DataTable();
                     da.Fill(dt);
                     return dt.Rows[0][0].ToString();
                 }
             }
         }
-
-
 
         public DataTable GetDetails(Master_BE objbe, string ConnKey)
         {
@@ -72,7 +68,6 @@ namespace Seed_DL
             }
         }
 
-
         public DataTable Company_IUDR(Master_BE objbe, string ConnKey)
         {
             using (SqlConnection con = new SqlConnection(ConnKey))
@@ -92,7 +87,6 @@ namespace Seed_DL
                 }
             }
         }
-
 
         public DataTable Crop_IUDR(Master_BE objBe, string ConnKey)
         {
@@ -118,8 +112,6 @@ namespace Seed_DL
             }
         }
 
-
-
         public DataTable Issustopsale(Master_BE obj, string ConnKey)
         {
             using (SqlConnection con = new SqlConnection(ConnKey))
@@ -135,6 +127,5 @@ namespace Seed_DL
                 }
             }
         }
-
     }
 }
