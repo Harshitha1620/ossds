@@ -100,7 +100,7 @@ namespace Seed_DL
                 using (SqlDataAdapter da = new SqlDataAdapter("Seed_AllotDistricts_UDR", con))
                 {
                     da.SelectCommand.CommandType = CommandType.StoredProcedure;
-                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = "R";
+                    da.SelectCommand.Parameters.Add("@action", SqlDbType.Char).Value = "R2";
                     da.SelectCommand.Parameters.Add("@Year", SqlDbType.VarChar).Value = objbe.year;
                     da.SelectCommand.Parameters.Add("@season", SqlDbType.VarChar).Value = objbe.season;
                     da.SelectCommand.Parameters.Add("@CropCode", SqlDbType.VarChar).Value = objbe.CropId;
